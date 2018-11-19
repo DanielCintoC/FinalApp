@@ -2,8 +2,7 @@ package com.fs.dcc.finalapp
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.fs.dcc.finalapp.utils.goToActivity
-import com.fs.dcc.finalapp.utils.toast
+import com.fs.dcc.finalapp.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -19,8 +18,10 @@ class LoginActivity : AppCompatActivity() {
 
             val email = editTextEmail.text.toString()
             val password = editTextPassword.text.toString()
-            if (isValidEmailAndPassword(email, password)) {
+            if (isValidEmail(email) && isValidPassword(password)) {
                 loginByEmail(email, password)
+            } else {
+                toast(R.string.message_data_incomplete)
             }
 
         }
@@ -34,20 +35,30 @@ class LoginActivity : AppCompatActivity() {
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
         }
 
+        editTextEmail.validate {
+            editTextEmail.error = if (isValidEmail(it)) null else getString(R.string.error_message_invalid_email)
+        }
+
+        editTextPassword.validate {
+            editTextPassword.error = if (isValidPassword(it)) null else getString(R.string.error_message_invalid_password)
+        }
+
     }
 
     private fun loginByEmail(email: String, password: String) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) {task ->
             if (task.isSuccessful) {
                 toast("User is now logged ni")
+                val currentUser = mAuth.currentUser!!
+                currentUser.displayName
+                currentUser.email
+                currentUser.photoUrl
+                currentUser.phoneNumber
+                currentUser.isEmailVerified
             }else {
                 toast(R.string.message_general_error)
             }
         }
-    }
-
-    private fun isValidEmailAndPassword(email: String, password: String): Boolean {
-        return !email.isNullOrEmpty() && !password.isNullOrEmpty()
     }
 
 }
