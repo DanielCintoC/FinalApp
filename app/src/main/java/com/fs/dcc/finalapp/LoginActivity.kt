@@ -15,12 +15,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        if (mAuth.currentUser === null) {
-
-        } else {
-            mAuth.signOut()
-        }
-
         buttonLogin.setOnClickListener {
 
             val email = editTextEmail.text.toString()
@@ -31,8 +25,14 @@ class LoginActivity : AppCompatActivity() {
 
         }
 
-        textViewForgotPassword.setOnClickListener { goToActivity<ForgotActivity>() }
-        buttonCreateAccount.setOnClickListener { goToActivity<SignUpActivity>() }
+        textViewForgotPassword.setOnClickListener {
+            goToActivity<ForgotActivity>()
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        }
+        buttonCreateAccount.setOnClickListener {
+            goToActivity<SignUpActivity>()
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        }
 
     }
 
