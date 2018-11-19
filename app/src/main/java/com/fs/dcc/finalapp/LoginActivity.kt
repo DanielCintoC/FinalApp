@@ -48,13 +48,13 @@ class LoginActivity : AppCompatActivity() {
     private fun loginByEmail(email: String, password: String) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) {task ->
             if (task.isSuccessful) {
-                toast("User is now logged ni")
-                val currentUser = mAuth.currentUser!!
-                currentUser.displayName
-                currentUser.email
-                currentUser.photoUrl
-                currentUser.phoneNumber
-                currentUser.isEmailVerified
+
+                if (mAuth.currentUser!!.isEmailVerified) {
+                    toast("User is now logged ni")
+                } else {
+                    toast(getString(R.string.message_email_not_confirm))
+                }
+
             }else {
                 toast(R.string.message_general_error)
             }

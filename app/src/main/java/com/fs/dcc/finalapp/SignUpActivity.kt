@@ -55,12 +55,16 @@ class SignUpActivity : AppCompatActivity() {
 
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
-                // Sign in success, update UI with the signed-in user's information
-                toast(R.string.message_send_email_confirm)
-                goToActivity<LoginActivity> {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+
+                mAuth.currentUser!!.sendEmailVerification().addOnCompleteListener(this) {
+
+                    toast(R.string.message_send_email_confirm)
+                    goToActivity<LoginActivity> {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+
                 }
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             } else {
                 toast(R.string.message_general_error)
             }
