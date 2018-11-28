@@ -21,5 +21,6 @@
     <string name="message_email_not_confirm">User must confirm email first</string>
     <string name="message_reset_password">Email has been sent to reset your password.</string>
     <string name="message_mail_correct">Please make sure the email address is correct.</string>
+    <string name="message_connection_failed">¡Connection failed!</string>
 
 </resources>
