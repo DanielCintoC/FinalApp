@@ -7,4 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.fs.dcc.finalapp.MainActivity">
 
+    <include android:id="@+id/toolbarView"
+        layout="@layout/toolbar"/>
+
 </android.support.constraint.ConstraintLayout>
