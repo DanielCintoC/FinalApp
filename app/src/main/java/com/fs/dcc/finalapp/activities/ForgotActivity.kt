@@ -1,8 +1,9 @@
-package com.fs.dcc.finalapp
+package com.fs.dcc.finalapp.activities
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.fs.dcc.finalapp.R
 import com.fs.dcc.finalapp.utils.goToActivity
 import com.fs.dcc.finalapp.utils.isValidEmail
 import com.fs.dcc.finalapp.utils.toast

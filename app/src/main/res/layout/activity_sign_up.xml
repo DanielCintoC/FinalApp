@@ -6,7 +6,7 @@
             android:layout_height="match_parent"
             android:background="@color/colorPrimaryDark"
             android:fillViewport="true"
-            tools:context="com.fs.dcc.finalapp.SignUpActivity">
+            tools:context="com.fs.dcc.finalapp.activities.SignUpActivity">
 
 <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"

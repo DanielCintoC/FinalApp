@@ -19,18 +19,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:theme="@style/NoPreview"
             android:windowSoftInputMode="adjustPan">
         </activity>
         <activity android:name=".MainActivity">
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name=".activities.SignUpActivity"
             android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
-            android:name=".ForgotActivity"
+            android:name=".activities.ForgotActivity"
             android:windowSoftInputMode="adjustPan">
         </activity>
     </application>

@@ -3,7 +3,6 @@ package com.fs.dcc.finalapp.activities
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.fs.dcc.finalapp.LoginActivity
 import com.fs.dcc.finalapp.MainActivity
 import com.fs.dcc.finalapp.utils.goToActivity
 import com.google.firebase.auth.FirebaseAuth
