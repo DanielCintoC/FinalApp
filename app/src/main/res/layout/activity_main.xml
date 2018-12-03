@@ -8,15 +8,16 @@
     android:orientation="horizontal"
     tools:context="com.fs.dcc.finalapp.MainActivity">
 
-    <include android:id="@+id/toolbarView"
+    <include
+        android:id="@+id/toolbarView"
         layout="@layout/toolbar"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbarView"
-        android:layout_above="@id/bottomNavView"/>
+        android:layout_above="@id/bottomNavView"
+        android:layout_below="@id/toolbarView"/>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottomNavView"
@@ -25,6 +26,9 @@
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
         app:elevation="16dp"
+        app:itemBackground="@drawable/bottom_navigation_ripple"
+        app:itemIconTint="@drawable/bottom_navigation_color"
+        app:itemTextColor="@drawable/bottom_navigation_color"
         app:menu="@menu/bottom_navigation_menu"/>
 
 </RelativeLayout>
