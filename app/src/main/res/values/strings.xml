@@ -23,6 +23,11 @@
     <string name="message_mail_correct">Please make sure the email address is correct.</string>
     <string name="message_connection_failed">¡Connection failed!</string>
 
+    <!--Bottom Navigation Menu -->
+    <string name="bottom_navigation_info">Info</string>
+    <string name="bottom_navigation_rates">Rates</string>
+    <string name="bottom_navigation_chat">Chat</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
