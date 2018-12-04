@@ -35,6 +35,8 @@ class ChatFragment : Fragment() {
     private lateinit var adapter: ChatAdapter
     private var messageList: ArrayList<Message> = ArrayList()
 
+    private var chatSubscription: ListenerRegistration? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -53,7 +55,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun setUpCurrentUser() {
-        currentUser =mAuth.currentUser!!
+        currentUser = mAuth.currentUser!!
     }
 
     private fun setUpRecyclerView() {
@@ -103,25 +105,34 @@ class ChatFragment : Fragment() {
     }
 
     private fun subscribeToChatMessages() {
-        chatDBReference.addSnapshotListener(object: EventListener, com.google.firebase.firestore.EventListener<QuerySnapshot> {
 
-            override fun onEvent(snapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
-                exception?.let {
-                    // Si esto no en nulo
-                    activity!!.toast("Exception: $exception")
-                    return
-                }
+        chatSubscription = chatDBReference.orderBy("sentAt", Query.Direction.DESCENDING) //.limit(100)
+                .addSnapshotListener(object : EventListener, com.google.firebase.firestore.EventListener<QuerySnapshot> {
 
-                snapshot?.let {
-                    messageList.clear()
-                    val messages = it.toObjects(Message::class.java)
-                    messageList.addAll(messages)
-                    adapter.notifyDataSetChanged()
-                }
+                    override fun onEvent(snapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
+                        exception?.let {
+                            // Si esto no en nulo
+                            activity!!.toast("Exception: $exception")
+                            return
+                        }
 
-            }
+                        snapshot?.let {
+                            messageList.clear()
+                            val messages = it.toObjects(Message::class.java)
+                            messageList.addAll(messages.asReversed())
+                            adapter.notifyDataSetChanged()
+                            _view.recyclerView.smoothScrollToPosition(messageList.size)
+                        }
 
-        })
+                    }
+
+                })
+
+    }
+
+    override fun onDestroy() {
+        chatSubscription?.remove()
+        super.onDestroy()
     }
 
 }
