@@ -15,11 +15,11 @@ import com.fs.dcc.finalapp.models.Message
 import com.fs.dcc.finalapp.utils.toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_chat.view.*
 import java.util.*
+import java.util.EventListener
 import kotlin.collections.HashMap
 
 class ChatFragment : Fragment() {
@@ -43,6 +43,7 @@ class ChatFragment : Fragment() {
         setUpCurrentUser()
         setUpRecyclerView()
         setUpChatButton()
+        subscribeToChatMessages()
         return _view
     }
 
@@ -99,6 +100,28 @@ class ChatFragment : Fragment() {
                     activity!!.toast("¡Something was wrong, please try again!")
                 }
 
+    }
+
+    private fun subscribeToChatMessages() {
+        chatDBReference.addSnapshotListener(object: EventListener, com.google.firebase.firestore.EventListener<QuerySnapshot> {
+
+            override fun onEvent(snapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
+                exception?.let {
+                    // Si esto no en nulo
+                    activity!!.toast("Exception: $exception")
+                    return
+                }
+
+                snapshot?.let {
+                    messageList.clear()
+                    val messages = it.toObjects(Message::class.java)
+                    messageList.addAll(messages)
+                    adapter.notifyDataSetChanged()
+                }
+
+            }
+
+        })
     }
 
 }
