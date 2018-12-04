@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import com.fs.dcc.finalapp.R
 import com.fs.dcc.finalapp.adapters.ChatAdapter
 import com.fs.dcc.finalapp.models.Message
+import com.fs.dcc.finalapp.utils.toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
@@ -19,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_chat.view.*
 import java.util.*
+import kotlin.collections.HashMap
 
 class ChatFragment : Fragment() {
 
@@ -73,10 +75,29 @@ class ChatFragment : Fragment() {
                 val message = Message(currentUser.uid, messageText,
                         currentUser.photoUrl.toString(), Date())
                 //Guardaremos msj en firebase
+                saveMessage(message)
                 _view.editTextMessage.setText("")
             }
 
         }
+
+    }
+
+    // Guardar mensaje en servicio de Firebase
+    private fun saveMessage(message: Message) {
+
+        val newMessage = HashMap<String, Any>()
+        newMessage["authorId"] = message.authorId
+        newMessage["message"] = message.message
+        newMessage["profileImageURL"] = message.profileImageURL
+        newMessage["sentAt"] = message.sentAt
+        chatDBReference.add(newMessage)
+                .addOnCompleteListener {
+                    activity!!.toast("¡Message added!")
+                }
+                .addOnFailureListener {
+                    activity!!.toast("¡Something was wrong, please try again!")
+                }
 
     }
 
