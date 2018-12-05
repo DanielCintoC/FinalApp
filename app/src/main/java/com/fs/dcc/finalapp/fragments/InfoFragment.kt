@@ -12,9 +12,14 @@ import com.fs.dcc.finalapp.R
 class InfoFragment : Fragment() {
 
 
+    private lateinit var _view: View
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_info, container, false)
+
+        _view = inflater.inflate(R.layout.fragment_info, container, false)
+        return _view
+
     }
 
 }
