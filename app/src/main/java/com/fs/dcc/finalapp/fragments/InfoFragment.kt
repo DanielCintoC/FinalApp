@@ -9,13 +9,14 @@ import android.view.ViewGroup
 
 import com.fs.dcc.finalapp.R
 import com.fs.dcc.finalapp.utils.CircleTransform
+import com.fs.dcc.finalapp.utils.toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_info.view.*
+import java.util.*
+import java.util.EventListener
 
 class InfoFragment : Fragment() {
 
@@ -35,6 +36,8 @@ class InfoFragment : Fragment() {
         setUpChatDB()
         setUpCurrentUser()
         setUpCurrentUserInfoUI()
+        //Firebase Style, total messages
+        subscribeToTotalMessagesFirebaseStyle()
 
         return _view
 
@@ -51,7 +54,7 @@ class InfoFragment : Fragment() {
 
     private fun setUpCurrentUserInfoUI() {
         _view.textViewInfoEmail.text = currentUser.email
-        _view.textViewInfoName.text = currentUser.displayName?.let { currentUser.displayName } ?: run {getString(R.string.info_no_name)}
+        _view.textViewInfoName.text = currentUser.displayName?.let { it } ?: run {getString(R.string.info_no_name)}
         currentUser.photoUrl?.let {
             Picasso.get().load(currentUser.photoUrl).resize(300, 300)
                     .centerCrop().transform(CircleTransform()).into(_view.imageViewInfoAvatar)
@@ -59,6 +62,20 @@ class InfoFragment : Fragment() {
             Picasso.get().load(R.drawable.ic_avatar).resize(300, 300)
                     .centerCrop().transform(CircleTransform()).into(_view.imageViewInfoAvatar)
         }
+    }
+
+    private fun subscribeToTotalMessagesFirebaseStyle() {
+        chatDBReference.addSnapshotListener(object : EventListener, com.google.firebase.firestore.EventListener<QuerySnapshot> {
+            override fun onEvent(querySnapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
+
+                exception?.let {
+                    // Si esto no en nulo
+                    activity!!.toast("Exception: $exception")
+                    return
+                }
+                querySnapshot?.let { _view.textViewInfoTotalMessages.text = "${it.size()}" }
+            }
+        })
     }
 
 }
