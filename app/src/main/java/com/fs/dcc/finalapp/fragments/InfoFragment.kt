@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.fs.dcc.finalapp.R
+import com.fs.dcc.finalapp.models.TotalMessagesEvent
 import com.fs.dcc.finalapp.utils.CircleTransform
+import com.fs.dcc.finalapp.utils.RxBus
 import com.fs.dcc.finalapp.utils.toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -37,8 +39,10 @@ class InfoFragment : Fragment() {
         setUpCurrentUser()
         setUpCurrentUserInfoUI()
         //Firebase Style, total messages
-        subscribeToTotalMessagesFirebaseStyle()
+        //subscribeToTotalMessagesFirebaseStyle()
 
+        // Event Bus Reactive Style, total messages
+        subscribeToTotalMessagesEventBusReactiveStyle()
         return _view
 
     }
@@ -76,6 +80,16 @@ class InfoFragment : Fragment() {
                 querySnapshot?.let { _view.textViewInfoTotalMessages.text = "${it.size()}" }
             }
         })
+    }
+
+    private fun subscribeToTotalMessagesEventBusReactiveStyle() {
+
+        RxBus.listen(TotalMessagesEvent::class.java).subscribe({
+
+            _view.textViewInfoTotalMessages.text = "${it.total}"
+
+        })
+
     }
 
     override fun onDestroyView() {

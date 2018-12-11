@@ -12,6 +12,8 @@ import android.view.ViewGroup
 import com.fs.dcc.finalapp.R
 import com.fs.dcc.finalapp.adapters.ChatAdapter
 import com.fs.dcc.finalapp.models.Message
+import com.fs.dcc.finalapp.models.TotalMessagesEvent
+import com.fs.dcc.finalapp.utils.RxBus
 import com.fs.dcc.finalapp.utils.toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -123,6 +125,7 @@ class ChatFragment : Fragment() {
                             messageList.addAll(messages.asReversed())
                             adapter.notifyDataSetChanged()
                             _view.recyclerView.smoothScrollToPosition(messageList.size)
+                            RxBus.publish(TotalMessagesEvent(messageList.size))
                         }
 
                     }
