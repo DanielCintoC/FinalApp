@@ -65,17 +65,22 @@ class InfoFragment : Fragment() {
     }
 
     private fun subscribeToTotalMessagesFirebaseStyle() {
-        chatDBReference.addSnapshotListener(object : EventListener, com.google.firebase.firestore.EventListener<QuerySnapshot> {
+        chatSubscription = chatDBReference.addSnapshotListener(object : EventListener, com.google.firebase.firestore.EventListener<QuerySnapshot> {
             override fun onEvent(querySnapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
 
                 exception?.let {
                     // Si esto no en nulo
-                    activity!!.toast("Exception: $exception")
+                    activity!!.toast("Exception: $it")
                     return
                 }
                 querySnapshot?.let { _view.textViewInfoTotalMessages.text = "${it.size()}" }
             }
         })
+    }
+
+    override fun onDestroyView() {
+        chatSubscription?.remove()
+        super.onDestroyView()
     }
 
 }
