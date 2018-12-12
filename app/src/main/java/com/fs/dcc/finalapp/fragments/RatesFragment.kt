@@ -14,13 +14,14 @@ import com.fs.dcc.finalapp.dialogues.RateDialog
 import com.fs.dcc.finalapp.models.NewRateEvent
 import com.fs.dcc.finalapp.models.Rate
 import com.fs.dcc.finalapp.utils.RxBus
+import com.fs.dcc.finalapp.utils.toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.*
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_rates.view.*
+import java.util.*
+import java.util.EventListener
 
 class RatesFragment : Fragment() {
 
@@ -45,7 +46,9 @@ class RatesFragment : Fragment() {
         setUpRecyclerView()
         setUpFAB()
 
+        subscribeToRatings()
         subscribeToNewRatings()
+
         return _view
     }
 
@@ -72,9 +75,44 @@ class RatesFragment : Fragment() {
         currentUser = mAuth.currentUser!!
     }
 
-    private fun saveRate(rate: Rate) {}
+    private fun saveRate(rate: Rate) {
 
-    private fun subscribeToRatings() {}
+        val newRating = HashMap<String, Any>()
+        newRating["text"] = rate.text
+        newRating["rate"] = rate.rate
+        newRating["createdAt"] = rate.createdAt
+        newRating["profileImageURL"] = rate.profileImageURL
+
+        ratesDBRef.add(newRating).addOnCompleteListener {
+            activity!!.toast("Rating added!")
+        }.addOnFailureListener {
+            activity!!.toast("Rating error, try again!")
+        }
+
+    }
+
+    private fun subscribeToRatings() {
+
+        ratesDBRef.orderBy("createdAt", Query.Direction.DESCENDING)
+                .addSnapshotListener(object : EventListener, com.google.firebase.firestore.EventListener<QuerySnapshot> {
+                    override fun onEvent(snapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
+                        exception?.let {
+                            // Si esto no en nulo
+                            activity!!.toast("Exception: $exception")
+                            return
+                        }
+
+                        snapshot?.let {
+                            rates.clear()
+                            val rts = it.toObjects(Rate::class.java)
+                            rates.addAll(rts)
+                            adapter.notifyDataSetChanged()
+                            _view.recyclerView.smoothScrollToPosition(0)
+                        }
+
+                    }
+                })
+    }
 
     private fun subscribeToNewRatings() {
         RxBus.listen(NewRateEvent::class.java).subscribe({
