@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat
  */
 class RatesAdapter(private val items: List<Rate>) : RecyclerView.Adapter<RatesAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(parent.inflate(R.layout.fragment_rates))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(parent.inflate(R.layout.fragment_rates_item))
 
     override fun getItemCount() = items.size
 
@@ -29,10 +29,20 @@ class RatesAdapter(private val items: List<Rate>) : RecyclerView.Adapter<RatesAd
             textViewRate.text = rate.text
             textViewStar.text = "${rate.rate}"
             textViewCalendar.text = SimpleDateFormat("dd MMM, yyyy").format(rate.createdAt)
-            Picasso.get().load(rate.profileImageURL).resize(100, 100)
-                    .centerCrop()
-                    .transform(CircleTransform())
-                    .into(imageViewProfile)
+
+            if (rate.profileImageURL.isNotEmpty()) {
+                Picasso.get().load(rate.profileImageURL).resize(100, 100)
+                        .centerCrop()
+                        .transform(CircleTransform())
+                        .into(imageViewProfile)
+            } else {
+                Picasso.get().load(R.drawable.ic_avatar).resize(100, 100)
+                        .centerCrop()
+                        .transform(CircleTransform())
+                        .into(imageViewProfile)
+            }
+
+
         }
 
     }

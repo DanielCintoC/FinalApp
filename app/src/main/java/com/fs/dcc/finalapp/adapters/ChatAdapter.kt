@@ -65,10 +65,10 @@ class ChatAdapter(val items: List<Message>, val userIde: String): RecyclerView.A
             textViewMessageLeft.text = message.message
             textViewTimeLeft.text = SimpleDateFormat("hh:mm").format(message.sentAt)
             if(message.profileImageURL.isNotEmpty()) {
-                Picasso.get().load(R.drawable.ic_avatar).resize(100, 100)
+                Picasso.get().load(message.profileImageURL).resize(100, 100)
                         .centerCrop().transform(CircleTransform()).into(imageViewProfileLeft)
             } else {
-                Picasso.get().load(message.profileImageURL).resize(100, 100)
+                Picasso.get().load(R.drawable.ic_avatar).resize(100, 100)
                         .centerCrop().transform(CircleTransform()).into(imageViewProfileLeft)
             }
 

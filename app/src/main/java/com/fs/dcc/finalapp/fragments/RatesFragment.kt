@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +20,18 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.fragment_rates.*
 import kotlinx.android.synthetic.main.fragment_rates.view.*
 import java.util.*
 import java.util.EventListener
+import kotlin.collections.ArrayList
 
 class RatesFragment : Fragment() {
 
     private lateinit var _view: View
     private lateinit var adapter: RatesAdapter
     private val rates: ArrayList<Rate> = ArrayList()
+    private lateinit var scrollListener: RecyclerView.OnScrollListener
 
     private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private lateinit var currentUser: FirebaseUser
@@ -61,6 +65,24 @@ class RatesFragment : Fragment() {
         _view.recyclerView.itemAnimator = DefaultItemAnimator()
         _view.recyclerView.adapter = adapter
 
+        scrollListener = object: RecyclerView.OnScrollListener() {
+
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                if (dy > 0 || dy < 0 && _view.fabRating.isShown) {
+                    fabRating.hide()
+                }
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    fabRating.show()
+                }
+            }
+
+        }
+
+        _view.recyclerView.addOnScrollListener(scrollListener)
+
     }
 
     private fun setUpFAB() {
@@ -78,6 +100,7 @@ class RatesFragment : Fragment() {
     private fun saveRate(rate: Rate) {
 
         val newRating = HashMap<String, Any>()
+        newRating["userId"] = rate.userId
         newRating["text"] = rate.text
         newRating["rate"] = rate.rate
         newRating["createdAt"] = rate.createdAt
@@ -93,7 +116,7 @@ class RatesFragment : Fragment() {
 
     private fun subscribeToRatings() {
 
-        ratesDBRef.orderBy("createdAt", Query.Direction.DESCENDING)
+        ratesSubscriptor = ratesDBRef.orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener(object : EventListener, com.google.firebase.firestore.EventListener<QuerySnapshot> {
                     override fun onEvent(snapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
                         exception?.let {
@@ -106,6 +129,7 @@ class RatesFragment : Fragment() {
                             rates.clear()
                             val rts = it.toObjects(Rate::class.java)
                             rates.addAll(rts)
+                            removeFABIfRated(hasUserRated(rates))
                             adapter.notifyDataSetChanged()
                             _view.recyclerView.smoothScrollToPosition(0)
                         }
@@ -115,9 +139,33 @@ class RatesFragment : Fragment() {
     }
 
     private fun subscribeToNewRatings() {
-        RxBus.listen(NewRateEvent::class.java).subscribe({
+        rateBusListener = RxBus.listen(NewRateEvent::class.java).subscribe({
             saveRate(it.rate)
         })
+    }
+
+    private fun hasUserRated(rates: ArrayList<Rate>): Boolean {
+        var result = false
+        rates.forEach {
+            if (it.userId == currentUser.uid) {
+                result = true
+            }
+        }
+        return result
+    }
+
+    private fun removeFABIfRated(rated: Boolean) {
+        if (rated) {
+            _view.fabRating.hide()
+            _view.recyclerView.removeOnScrollListener(scrollListener)
+        }
+    }
+
+    override fun onDestroyView() {
+        _view.recyclerView.removeOnScrollListener(scrollListener)
+        rateBusListener.dispose()
+        ratesSubscriptor?.remove()
+        super.onDestroyView()
     }
 
 }

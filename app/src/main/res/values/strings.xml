@@ -40,5 +40,6 @@
     <string name="dialog_edit_text_hint">Leave your feedback</string>
     <string name="dialog_ok">Rate</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_message_not_empty_text">Rate can not be empty</string>
 
 </resources>
